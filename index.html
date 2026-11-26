@@ -14,7 +14,7 @@
 <link rel="icon" href="icon-192.png">
 <style>/*LIVE*/
 html.live [data-reset],html.live [data-fs],html.live .fsbtn,html.live .brief,html.live .sbar,html.live [data-simin],html.live [data-kitsim],html.live [data-destcold],html.live [data-domok],html.live [data-rec]{display:none!important}
-html.fs .phone{height:100dvh!important;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);box-sizing:border-box}
+html.fs .phone{padding-top:env(safe-area-inset-top);padding-bottom:0!important;box-sizing:border-box}
 /* place pour le badge « Powered by Netlify » sous la barre d'onglets */html.nlb .tabs{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 52px)!important}
 .lv-f{display:grid;gap:12px;margin-top:22px}.lv-row{display:grid;grid-template-columns:90px 1fr;gap:10px;align-items:end}
 .lv-f .seg{display:flex;gap:6px;margin-top:4px}.lv-f .seg button{flex:1;padding:10px 8px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit}
@@ -1065,7 +1065,8 @@ button.wf-bar{cursor:pointer}.wf-bar .wf-ic{flex:none;color:var(--sky,#2b7de9);d
 .ct-i.ct-sm{font-size:.8em}
 .wa-emo,#emoPanel{display:none!important}
 html.in-chat .tabs{display:none!important}
-html.fs .phone{height:var(--vvh,100dvh)!important}
+html.fs .phone{height:var(--vvh,100dvh)!important;top:var(--vvt,0px)!important;bottom:auto!important}
+html.in-chat:not(.kb) .composer.wa{padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))!important}
 html.kb .phone{padding-bottom:0!important}
 .cbs-lt{position:relative!important;inset:auto!important;display:flex!important;flex-direction:row!important;align-items:baseline!important;gap:10px!important;flex-wrap:wrap;margin:2px 0 4px;z-index:1}.cbs-lt b{font-size:20px!important}
 </style>
@@ -3328,7 +3329,15 @@ async function translateApp(name){
 
 const SAVE_KEYS=['hrHide','helped','roleF','bfAdd','bfOk','hrAdd','hrOk','hOk','autoTr','autoTrAll','homeMode','hAdd','frOpen','wfCapDone','wifiAdd','wifiOn','friends','frMeta','frSeed','frSeed2','frSeed3','frSeed4','simAuto','hOvr','kitAsk','inbox','naFrom','simDone','metBefore','cityOpen','tab','cbFrom','signed','qvGo','myPlans','readAt','evChat','tipOk','ntOk','seen','crewF','likes','city','matches','mtype','archAt','dest','arrived','threads','me','checkin','charterOK','gjoin','valid','depart','pending','nextMatchAt','rIdx','blocked','spSeg','sort','wifiOn','evN','arrN','tr','trDl','trV2'];
 let saveT=null;
-(function(){const vv=window.visualViewport;if(!vv)return;const set=()=>{document.documentElement.style.setProperty('--vvh',Math.round(vv.height)+'px');document.documentElement.classList.toggle('kb',vv.height<window.innerHeight-120);if(vv.offsetTop)window.scrollTo(0,0)};vv.addEventListener('resize',set);vv.addEventListener('scroll',set);set()})();
+(function(){const vv=window.visualViewport;if(!vv)return;const de=document.documentElement;
+  /* clavier ouvert : l'appli prend exactement la partie visible de l'écran, au-dessus du clavier ; clavier fermé : plein écran normal */
+  const set=()=>{const kb=vv.height<window.innerHeight-120;de.classList.toggle('kb',kb);
+    if(kb){de.style.setProperty('--vvh',Math.round(vv.height)+'px');de.style.setProperty('--vvt',Math.max(0,Math.round(vv.offsetTop))+'px')}
+    else{de.style.removeProperty('--vvh');de.style.setProperty('--vvt','0px');if(window.scrollY)window.scrollTo(0,0)}};
+  const later=()=>{set();setTimeout(set,120);setTimeout(set,400);setTimeout(set,900)};
+  vv.addEventListener('resize',set);vv.addEventListener('scroll',set);
+  document.addEventListener('focusin',e=>{later();if(e.target&&e.target.id==='msgIn')setTimeout(()=>{const sc=document.getElementById('screen');if(sc)sc.scrollTop=1e6},450)});
+  document.addEventListener('focusout',later);window.addEventListener('orientationchange',later);window.addEventListener('pageshow',later);document.addEventListener('visibilitychange',later);set()})();
 const PDB={db:null,open(){if(this.p)return this.p;this.p=new Promise(r=>{try{const q=indexedDB.open('layover',1);q.onupgradeneeded=()=>q.result.createObjectStore('kv');q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)}catch(e){r(null)}});return this.p},
   async set(k,v){const d=await this.open();if(!d)return;try{d.transaction('kv','readwrite').objectStore('kv').put(v,k)}catch(e){}},
   async get(k){const d=await this.open();if(!d)return null;return new Promise(r=>{try{const q=d.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>r(q.result||null);q.onerror=()=>r(null)}catch(e){r(null)}})}};
