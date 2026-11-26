@@ -2,7 +2,7 @@
 <html lang="fr" class="fs live">
 <meta charset="utf-8">
 <title>Layover</title>
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0c1522">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -881,7 +881,9 @@ abbr.iata{text-decoration:none;cursor:help}
 .composer.wa{display:flex!important;align-items:flex-end;gap:8px;padding:8px 10px!important;border:0!important;border-top:1px solid var(--line)!important;border-radius:0!important;background:var(--surface)!important;position:sticky;bottom:-16px;margin:auto -18px -16px!important;z-index:4}
 .wa-in{flex:1;display:flex;align-items:flex-end;gap:4px;border:1.5px solid var(--line);border-radius:22px;padding:3px 6px 3px 4px;background:var(--surface);min-width:0}
 .wa-emo{all:unset;cursor:pointer;font-size:21px;width:34px;height:36px;display:grid;place-items:center;flex:none}
-.composer.wa textarea{min-height:36px!important;padding:8px 4px!important;font-size:15.5px}
+.composer.wa textarea{min-height:36px!important;padding:8px 4px!important;font-size:16px}
+/* iPhone : en dessous de 16 px, Safari zoome tout seul sur le champ touché */
+@supports (-webkit-touch-callout:none){input,textarea,select{font-size:max(16px,1em)!important}}
 .wa-go{all:unset;cursor:pointer;flex:none;width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center}.wa-go svg{width:22px;height:22px}
 .composer.wa .wa-send{display:none}.composer.wa.has-t .wa-send{display:grid}.composer.wa.has-t .wa-mic{display:none}
 .phone.in-chat .msgs{flex:1}
